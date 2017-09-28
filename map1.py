@@ -1,5 +1,6 @@
 import folium
 import pandas
+import io
 
 data = pandas.read_csv("Volcanoes_USA.txt")
 lat = list(data["LAT"])
@@ -14,15 +15,17 @@ def color_producer(elevation):
     else:
         return 'red'
 
-
-map = folium.Map(location = [38.58,-99.09],zoom_start = 10)
+map = folium.Map(location = [38.58,-99.09],zoom_start = 10, tiles='Mapbox Bright')
 
 
 fg = folium.FeatureGroup(name = "My Map")
 
 for lt,ln,el in zip(lat,lon,elev):
-
     fg.add_child(folium.Marker(location=[lt,ln], popup=str(el) + " m", icon = folium.Icon(color=color_producer(el))))
+
+
+fg.add_child(folium.GeoJson(data =(io.open('world.json', 'r', encoding = 'utf-8-sig').read())))
+
 
 map.add_child(fg)
 
